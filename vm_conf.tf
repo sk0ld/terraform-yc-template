@@ -38,6 +38,10 @@ terraform {
       description = "Virtual machine RAM GB number"
   }
 
+  variable "vm_name" {
+      type = string
+      description = "Virtual machine name"
+  }
   
 locals {
     image_id = "fd8sc0f4358r8pt128gg"
@@ -61,8 +65,9 @@ locals {
     v4_cidr_blocks = ["10.129.0.0/24"]
   }
   
-  resource "yandex_compute_instance" "vm-for-test" {
-    name        = "vm-for-test"
+  resource "yandex_compute_instance" "vm" {
+    name        = "${var.vm_name}"
+    allow_stopping_for_update = true
   
     resources {
       cores  = "${var.vm_cpu_cores}"
@@ -100,7 +105,7 @@ locals {
       }
     }
     
-    output "public_ip_address_vm-for-test" {
-        value = yandex_compute_instance.vm-for-test.network_interface.0.nat_ip_address
+    output "public_ip_address_vm" {
+        value = yandex_compute_instance.vm.network_interface.0.nat_ip_address
       }
                                
