@@ -33,7 +33,7 @@ Follow YC manual: https://cloud.yandex.ru/docs/cli/quickstart
 Clone repository:
 
 ```
-git clone https://github.com/sk0ld/terraform-ycloud-template.git
+git clone https://github.com/sk0ld/terraform-yc-template.git
 cd terraform-ycloud-template
 ```
 
