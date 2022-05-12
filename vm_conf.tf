@@ -42,7 +42,22 @@ terraform {
       type = string
       description = "Virtual machine name"
   }
+
+
+  variable "vm2_cpu_cores" {
+      type = string
+      description = "Virtual machine2 CPU cores number"
+  }
   
+  variable "vm2_ram" {
+      type = string
+      description = "Virtual machine2 RAM GB number"
+  }
+
+  variable "vm2_name" {
+      type = string
+      description = "Virtual machine2 name"
+  }
 locals {
     image_id = "fd8sc0f4358r8pt128gg"
     zone = "ru-central1-b"
@@ -91,7 +106,31 @@ locals {
         user-data = "${file("/home/${local.user_name}/meta.txt")}"
       }
     
+   resource "yandex_compute_instance" "vm2" {
+    name        = "${var.vm2_name}"
+    allow_stopping_for_update = true
+  
+    resources {
+      cores  = "${var.vm2_cpu_cores}"
+      memory = "${var.vm2_ram}"
+      core_fraction = 20
+    }
+  
+    boot_disk {
+      initialize_params {
+        image_id = local.image_id
+        type     = "network-ssd"
+        size = 15
+      }
+    }
+    network_interface {
+        subnet_id = "${yandex_vpc_subnet.subnet-1.id}"
+        nat = true
+      }
     
+      metadata = {
+        user-data = "${file("/home/${local.user_name}/meta.txt")}"
+      } 
       provisioner "remote-exec" {
         inline = [
           "sudo apt update"
@@ -106,6 +145,10 @@ locals {
     }
     
     output "public_ip_address_vm" {
+        value = yandex_compute_instance.vm.network_interface.0.nat_ip_address
+      }
+
+    output "public_ip_address_vm2" {
         value = yandex_compute_instance.vm.network_interface.0.nat_ip_address
       }
                                
