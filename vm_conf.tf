@@ -164,6 +164,6 @@ locals {
       }
 
     output "public_ip_address_vm2" {
-        value = yandex_compute_instance.vm.network_interface.0.nat_ip_address
+        value = yandex_compute_instance.vm2.network_interface.0.nat_ip_address
       }
                                
