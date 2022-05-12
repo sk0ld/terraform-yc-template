@@ -106,7 +106,21 @@ locals {
         user-data = "${file("/home/${local.user_name}/meta.txt")}"
       }
     
-   resource "yandex_compute_instance" "vm2" {
+  
+      provisioner "remote-exec" {
+        inline = [
+          "sudo apt update"
+              ]
+        connection {
+          type     = "ssh"
+          user     = local.user_name
+          private_key = "${file("/home/${local.user_name}/.private_yc")}"
+          host     = self.network_interface.0.nat_ip_address
+        }
+      }
+    }
+
+    resource "yandex_compute_instance" "vm2" {
     name        = "${var.vm2_name}"
     allow_stopping_for_update = true
   
@@ -131,7 +145,8 @@ locals {
       metadata = {
         user-data = "${file("/home/${local.user_name}/meta.txt")}"
       } 
-      provisioner "remote-exec" {
+
+    provisioner "remote-exec" {
         inline = [
           "sudo apt update"
               ]
@@ -142,7 +157,7 @@ locals {
           host     = self.network_interface.0.nat_ip_address
         }
       }
-    }
+    }  
     
     output "public_ip_address_vm" {
         value = yandex_compute_instance.vm.network_interface.0.nat_ip_address
